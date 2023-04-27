@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp-configmap
+  namespace: apps
+data:
+  API_HOST: uuid.service

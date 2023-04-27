@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: apps
+spec:
+  ## 1) Replicas
+  replicas: 2
+  selector:
+    matchLabels:
+      name: myapp
+  template:
+    metadata:
+      labels:
+        name: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: aleferreiranogueira/k8s-training-app:0.2
+        # 2) recursos
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        ports:
+          - containerPort: 8080
+      ## 3) ConfigMap
+#      envFrom:
+#        - configMapRef:
+#          name: myapp-configmap
+      ## 4) HA - probes
+      livenessProbe: # Quando restartar o pod
+        tcpSocket:
+          port: 8080
+        initialDelaySeconds: 10 # Espera 10 segundos antes de fazer o primeiro probe
+        periodSeconds: 5 # Faz o probe a cada 5 segundos
+        timeoutSeconds: 2 # Cada probe tem 2 segundos de timeout
+        failureThreshold: 3 # Falhas sucetivas até o kubelet desistir do pod
+        successThreshold: 1 # Sucessos sucetivos para o kubelet deixar o pod disponível
+      readinessProbe: # Quando o pod deve receber tráfego
+        httpGet:
+          path: /health
+          port: 8080
+        initialDelaySeconds: 10 
+        periodSeconds: 5
+        timeoutSeconds: 2
+        failureThreshold: 3
+        successThreshold: 1
+
+
+
+
+
+      ## 5) HA - affinities
+      # affinity:
+      #   podAntiAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #       - podAffinityTerm:
+      #           labelSelector:
+      #             matchExpressions:
+      #               - key: name
+      #                 operator: In
+      #                 values:
+      #                   - "myapp"
+      #           topologyKey: "topology.kubernetes.io/zone"
+      #         weight: 1
