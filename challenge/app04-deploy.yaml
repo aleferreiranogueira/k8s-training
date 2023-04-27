@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app04
+  namespace: k8s-training
+spec:
+  ## 1) Replicas
+  replicas: 2
+  selector:
+    matchLabels:
+      name: app04
+  template:
+    metadata:
+      labels:
+        name: app04
+    spec:
+      containers:
+      - name: myapp
+        image: aleferreiranogueira/k8s-training-app:0.3
+        ## 2) recursos
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        ports:
+          - containerPort: 8080
+        # 4) ConfigMap
+        env:
+          - name:  SUPER_WRONG_NOT_RIGHT_ENV
+            valueFrom:
+              configMapKeyRef:
+                name:  app01-cm
+                key:  API_HOST
+        ## 3) HA - probes
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 1
+          failureThreshold: 3
+          successThreshold: 1
+        livenessProbe: # Quando restartar o pod
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 1
+          failureThreshold: 3
+          successThreshold: 1

@@ -1,18 +1,21 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: myapp
-  namespace: apps
+  name: app03
+  namespace: k8s-training
   labels:
-    name: myapp
+    name: app03
 spec:
   containers:
-  - name: myapp
+  - name: app03
     image: aleferreiranogueira/k8s-training-app:0.3
     ## 3) ConfigMap
-    envFrom:
-    - configMapRef:
-        name: myapp-configmap
+    env:
+      - name:  API_HOST
+        valueFrom:
+          configMapKeyRef:
+            name:  app01-cm
+            key:  API_HOST
     resources:
       requests:
         memory: "64Mi"

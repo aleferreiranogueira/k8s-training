@@ -18,10 +18,12 @@ func list(w http.ResponseWriter, r *http.Request) {
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
 	if os.Getenv("API_HOST") == "" {
+		fmt.Printf("API_HOST is not set! App is not ready\n")
 		w.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
 
+	fmt.Printf("API_HOST set! App is READY!\n")
 	w.WriteHeader(http.StatusOK)
 }
 
