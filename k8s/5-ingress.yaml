@@ -3,9 +3,10 @@ kind: Ingress
 metadata:
   name: myapp-ingress
   namespace: apps
-  annotations:  
+  annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
+  ingressClassName: nginx
   rules:
   - host: app.local.dev
     http:
@@ -14,7 +15,7 @@ spec:
           service:
             name: "myapp-service"
             port:
-              number: 6000 
+              number: 6000
         pathType: Prefix
         path: /
 

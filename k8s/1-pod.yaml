@@ -18,7 +18,4 @@ spec:
         cpu: "100m"
     ports:
       - containerPort: 8080
-    envFrom:
-      - configMapRef:
-          name: myapp-configmap
 

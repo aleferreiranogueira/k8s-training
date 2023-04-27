@@ -5,7 +5,7 @@ metadata:
   namespace: apps
 spec:
   ## 1) Replicas
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       name: myapp
@@ -24,28 +24,29 @@ spec:
             cpu: "100m"
         ports:
           - containerPort: 8080
+        livenessProbe: # Quando restartar o pod
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10 # Espera 10 segundos antes de fazer o primeiro probe
+          periodSeconds: 5 # Faz o probe a cada 5 segundos
+          timeoutSeconds: 2 # Cada probe tem 2 segundos de timeout
+          failureThreshold: 3 # Falhas sucetivas até o kubelet desistir do pod
+          successThreshold: 1 # Sucessos sucetivos para o kubelet deixar o pod disponível
+        readinessProbe: # Quando o pod deve receber tráfego
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+          successThreshold: 1
       ## 3) ConfigMap
-#      envFrom:
-#        - configMapRef:
-#          name: myapp-configmap
+      envFrom:
+        - configMapRef:
+          name: myapp-configmap
       ## 4) HA - probes
-      livenessProbe: # Quando restartar o pod
-        tcpSocket:
-          port: 8080
-        initialDelaySeconds: 10 # Espera 10 segundos antes de fazer o primeiro probe
-        periodSeconds: 5 # Faz o probe a cada 5 segundos
-        timeoutSeconds: 2 # Cada probe tem 2 segundos de timeout
-        failureThreshold: 3 # Falhas sucetivas até o kubelet desistir do pod
-        successThreshold: 1 # Sucessos sucetivos para o kubelet deixar o pod disponível
-      readinessProbe: # Quando o pod deve receber tráfego
-        httpGet:
-          path: /health
-          port: 8080
-        initialDelaySeconds: 10 
-        periodSeconds: 5
-        timeoutSeconds: 2
-        failureThreshold: 3
-        successThreshold: 1
+
 
 
 
