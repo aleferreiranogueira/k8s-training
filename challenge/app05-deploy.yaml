@@ -46,9 +46,9 @@ spec:
           successThreshold: 1
         livenessProbe: # Quando restartar o pod
           tcpSocket:
-            port: 8080
-          initialDelaySeconds: 0
-          periodSeconds: 1
+            port: 666
+          initialDelaySeconds: 10
+          periodSeconds: 2
           timeoutSeconds: 1
-          failureThreshold: 1
+          failureThreshold: 3
           successThreshold: 1
