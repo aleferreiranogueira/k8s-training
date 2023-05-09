@@ -45,10 +45,10 @@ spec:
           timeoutSeconds: 2
           failureThreshold: 3
           successThreshold: 1
-        ## 4) ConfigMap
-        # envFrom:
-        #   - configMapRef:
-        #       name: myapp-configmap
+        # 4) ConfigMap
+        envFrom:
+          - configMapRef:
+              name: myapp-configmap
 
       ## 5) HA - affinities
       affinity:
